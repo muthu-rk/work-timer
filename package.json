@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "homepage": "https://muthu-rk.github.io/vibe-coding/work-timer/",
+  "homepage": "https://muthu-rk.github.io/work-timer/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
