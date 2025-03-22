@@ -10,6 +10,7 @@ export default function ChessClock({ player1, player2, theme, onCancel }) {
 
     const tickSound = useRef(null);
     const bellSound = useRef(null);
+    const bellPlayedRef = useRef(false); // ✅ New ref to track bell state
 
     useEffect(() => {
         document.body.className = theme;
@@ -22,8 +23,11 @@ export default function ChessClock({ player1, player2, theme, onCancel }) {
                 if (activePlayer === 1) {
                     setPlayer1Time(prev => {
                         if (prev <= 1) {
-                            bellSound.current?.play();
-                            stopBellAfterDelay();
+                            if (!bellPlayedRef.current && bellSound.current && bellSound.current.paused) {
+                                bellPlayedRef.current = true;
+                                bellSound.current.play().catch(console.error);
+                                stopBellAfterDelay();
+                            }
                             return 0;
                         }
                         return prev - 1;
@@ -31,8 +35,11 @@ export default function ChessClock({ player1, player2, theme, onCancel }) {
                 } else {
                     setPlayer2Time(prev => {
                         if (prev <= 1) {
-                            bellSound.current?.play();
-                            stopBellAfterDelay();
+                            if (!bellPlayedRef.current && bellSound.current && bellSound.current.paused) {
+                                bellPlayedRef.current = true;
+                                bellSound.current.play().catch(console.error);
+                                stopBellAfterDelay();
+                            }
                             return 0;
                         }
                         return prev - 1;
@@ -80,11 +87,13 @@ export default function ChessClock({ player1, player2, theme, onCancel }) {
     };
 
     const handlePause = () => setIsPaused(true);
+
     const handleReset = () => {
         setPlayer1Time(player1.time * 60);
         setPlayer2Time(player2.time * 60);
         setActivePlayer(null);
         setIsPaused(true);
+        bellPlayedRef.current = false; // ✅ Reset bell trigger
     };
 
     const total1 = player1.time * 60;
@@ -92,8 +101,8 @@ export default function ChessClock({ player1, player2, theme, onCancel }) {
 
     return (
         <div className="timer-screen">
-            <audio ref={tickSound} src={new URL('../assets/tick.mp3', import.meta.url).href} preload="auto" />
-            <audio ref={bellSound} src={new URL('../assets/bell.mp3', import.meta.url).href} preload="auto" />
+            <audio ref={tickSound} src={`${import.meta.env.BASE_URL}tick.mp3`} preload="auto" />
+            <audio ref={bellSound} src={`${import.meta.env.BASE_URL}bell.mp3`} preload="auto" />
             <div className="timer-buttons">
                 <button onClick={handlePlay}>▶</button>
                 <button onClick={handlePause}>⏸</button>
