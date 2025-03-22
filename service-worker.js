@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v3"; // 🔄 Increment this on each deploy
+const CACHE_VERSION = "v4"; // 🔄 Increment this on each deploy
 const CACHE_NAME = `chess-clock-${CACHE_VERSION}`;
 const FILES_TO_CACHE = [
   "/work-timer/",
