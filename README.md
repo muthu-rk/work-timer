@@ -2,25 +2,19 @@
 
 > This app was developed using **vibe coding** 🌀
 
-A minimalist, offline-capable **progressive web app (PWA)** chess clock built using **React + Vite**. Ideal for casual or tournament-style play with visual time warnings and sound cues.
+🧠 Inspired by [The Chess Timer Method – Boost Focus and Productivity](https://www.noisli.com/blog/the-chess-timer-method/), this app adapts the idea of switching focused work sessions between two people or tasks using a chess clock-like approach.
 
----
-
-## 🚀 Features
-
-- ⚡ Fast, lightweight, installable as a PWA
-- 🟢 Dynamic color indicators: green → yellow → pink → gray
-- 🔔 Tick sound on player switch, bell on timeout (stops after 5s)
-- 🎨 Light/dark theme support
-- 🔄 Auto-refreshes after updates (no stale cache)
-- 📴 Works fully offline after install
+Learn how using a chess timer helps you:
+- Structure focused time between tasks
+- Stay accountable in pair programming or meetings
+- Create fairness in speaking time
+- Minimize overthinking and interruptions
 
 ---
 
 ## 🌐 Try it Live
 
-👉 **[Launch the Chess Clock App](https://muthu-rk.github.io/work-timer/)**
-
+👉 **[Launch the Chess Clock App](https://muthu-rk.github.io/work-timer/)**  
 No install required — runs directly in your browser.
 
 ---
@@ -29,11 +23,10 @@ No install required — runs directly in your browser.
 
 ### On Mobile (Android/iOS)
 
-1. Open the app in your browser:
-   [https://muthu-rk.github.io/work-timer/](https://muthu-rk.github.io/work-timer/)
+1. Open [https://muthu-rk.github.io/work-timer/](https://muthu-rk.github.io/work-timer/)
 2. Tap the browser menu (`⋮` on Android, `Share` on iOS)
 3. Select **“Add to Home Screen”**
-4. Launch the app from your home screen like a native app
+4. Launch from your home screen like a native app
 
 ### On Desktop (Chrome/Edge)
 
