@@ -2,7 +2,11 @@
 self.addEventListener("install", (e) => {
   e.waitUntil(
     caches.open("chess-clock").then((cache) =>
-      cache.addAll(["/", "/index.html", "/manifest.json", "/tick.mp3", "/bell.mp3"])
+      cache.addAll(["/work-timer/",
+        "/work-timer/index.html",
+        "/work-timer/manifest.json",
+        "/work-timer/tick.mp3",
+        "/work-timer/bell.mp3"])
     )
   );
 });
