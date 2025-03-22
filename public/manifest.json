@@ -3,18 +3,18 @@
   "name": "Chess Clock",
   "short_name": "ChessClock",
   "description": "A simple offline-capable chess clock timer.",
-  "start_url": "/",
+  "start_url": "/work-timer/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
   "icons": [
     {
-      "src": "/time-tracking.png",
+      "src": "time-tracking.png",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "/prioritize.png",
+      "src": "prioritize.png",
       "sizes": "512x512",
       "type": "image/png"
     }

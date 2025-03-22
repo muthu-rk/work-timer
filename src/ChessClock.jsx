@@ -92,8 +92,8 @@ export default function ChessClock({ player1, player2, theme, onCancel }) {
 
     return (
         <div className="timer-screen">
-            <audio ref={tickSound} src="/tick.mp3" preload="auto" />
-            <audio ref={bellSound} src="/bell.mp3" preload="auto" />
+            <audio ref={tickSound} src={new URL('../assets/tick.mp3', import.meta.url).href} preload="auto" />
+            <audio ref={bellSound} src={new URL('../assets/bell.mp3', import.meta.url).href} preload="auto" />
             <div className="timer-buttons">
                 <button onClick={handlePlay}>▶</button>
                 <button onClick={handlePause}>⏸</button>
