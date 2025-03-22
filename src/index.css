@@ -1,0 +1,122 @@
+
+:root {
+    --bg-color-light: #f4f4f4;
+    --text-color-light: #222;
+    --bg-color-dark: #121212;
+    --text-color-dark: #ffffff;
+}
+
+body.light {
+    background-color: var(--bg-color-light);
+    color: var(--text-color-light);
+}
+
+body.dark {
+    background-color: var(--bg-color-dark);
+    color: var(--text-color-dark);
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+input, button {
+    font-size: 16px;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
+}
+
+.toggle-btn {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    background-color: white;
+    color: black;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    gap: 2rem;
+}
+
+input[type="text"], input[type="number"] {
+    padding: 0.5rem;
+    margin-right: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+}
+
+.timer-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: space-between;
+}
+
+.timer-buttons {
+    display: flex;
+    justify-content: space-around;
+    padding: 1rem;
+}
+
+.timers {
+    display: flex;
+    flex: 1;
+}
+
+.timer-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.timer-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.timer-block {
+    width: 100%;
+    height: 100%;
+    font-size: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+}
+
+/* Dynamic Timer Colors */
+/* pink removed */   { background-color: #ffc0cb; color: black; }
+/* yellow removed */ { background-color: #ffeb3b; color: black; }
+/* blue removed */   { background-color: #2196f3; color: white; }
+/* green removed */  { background-color: #00a84f; color: white; }
+/* gray removed */   { background-color: #3a3a3a; color: black; }
+
+
+/* Additional Color Classes for Lighter Progression */
+.pink    { background-color: #f8bbd0; color: black; }
+.yellow  { background-color: #fff9c4; color: black; }
+.green   { background-color: #ccffcc; color: black; }
+.gray    { background-color: #3a3a3a; color: white; }
+
+/* rest stays the same */
