@@ -25,4 +25,24 @@ if ('serviceWorker' in navigator) {
       });
     });
   }
-  
+
+// ✅ Version Check to force reload on deploy
+async function checkAppVersion() {
+  try {
+    const res = await fetch('/work-timer/version.json', { cache: 'no-cache' });
+    const { version: latest } = await res.json();
+    const current = localStorage.getItem('app_version');
+
+    if (current && current !== latest) {
+      console.warn('[App] Version changed. Clearing cache and reloading...');
+      localStorage.clear();
+      caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
+      location.reload(true);
+    }
+
+    localStorage.setItem('app_version', latest);
+  } catch (err) {
+    console.error('[App] Failed to check app version', err);
+  }
+}
+checkAppVersion();
