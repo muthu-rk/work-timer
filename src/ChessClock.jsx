@@ -10,7 +10,7 @@ export default function ChessClock({ player1, player2, theme, onCancel }) {
 
     const tickSound = useRef(null);
     const bellSound = useRef(null);
-    const bellPlayedRef = useRef(false); // ✅ New ref to track bell state
+    const bellPlayedRef = useRef(false);
 
     useEffect(() => {
         document.body.className = theme;
@@ -67,7 +67,7 @@ export default function ChessClock({ player1, player2, theme, onCancel }) {
 
     const getColorClass = (remaining, total) => {
         const percentage = remaining / total;
-        if (percentage <= 0) return "gray";
+        if (percentage <= 0) return "green";
         if (percentage <= 0.1) return "pink";
         if (percentage <= 0.5) return "yellow";
         return "green";
@@ -115,18 +115,45 @@ export default function ChessClock({ player1, player2, theme, onCancel }) {
                     <div className="timer-name">{player1.name || "Player 1"}</div>
                     <div
                         className={`timer-block ${activePlayer === 1 ? getColorClass(player1Time, total1) : 'gray'}`}
+                        style={{ position: "relative" }}
+                        title={`${Math.round((player1Time / total1) * 100)}% Remaining`}
                         onClick={activePlayer === 1 ? togglePlayer : undefined}
                     >
                         {formatTime(player1Time)}
+                        <div
+                            className="progress-bar"
+                            style={{
+                                position: "absolute",
+                                bottom: 0,
+                                left: 0,
+                                height: "4px",
+                                backgroundColor: "deepskyblue",
+                                width: `${(player1Time / total1) * 100}%`
+                            }}
+                        ></div>
                     </div>
                 </div>
+
                 <div className="timer-column">
                     <div className="timer-name">{player2.name || "Player 2"}</div>
                     <div
                         className={`timer-block ${activePlayer === 2 ? getColorClass(player2Time, total2) : 'gray'}`}
+                        style={{ position: "relative" }}
+                        title={`${Math.round((player2Time / total2) * 100)}% Remaining`}
                         onClick={activePlayer === 2 ? togglePlayer : undefined}
                     >
                         {formatTime(player2Time)}
+                        <div
+                            className="progress-bar"
+                            style={{
+                                position: "absolute",
+                                bottom: 0,
+                                left: 0,
+                                height: "4px",
+                                backgroundColor: "red",
+                                width: `${(player2Time / total2) * 100}%`
+                            }}
+                        ></div>
                     </div>
                 </div>
             </div>
