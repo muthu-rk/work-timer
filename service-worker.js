@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v6.3"; // 🔄 Increment this on each deploy
+const CACHE_VERSION = "v6.4"; // 🔄 Increment this on each deploy
 const CACHE_NAME = `chess-clock-${CACHE_VERSION}`;
 const FILES_TO_CACHE = [
   "/work-timer/",
@@ -10,13 +10,15 @@ const FILES_TO_CACHE = [
 
 self.addEventListener("install", (e) => {
   console.log("[SW] Installing new service worker and caching files...");
+  self.skipWaiting(); // 🚀 Activate immediately
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CACHE))
   );
 });
 
 self.addEventListener("activate", (e) => {
-  console.log("[SW] Activating service worker and cleaning up old caches...");
+  console.log("[SW] Activating new service worker and cleaning up old caches...");
+  clients.claim(); // 🚀 Take control of all clients immediately
   e.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
