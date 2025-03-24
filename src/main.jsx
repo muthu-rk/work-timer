@@ -24,25 +24,23 @@ if ('serviceWorker' in navigator) {
         };
       });
     });
-  }
-
-// ✅ Version Check to force reload on deploy
-async function checkAppVersion() {
-  try {
-    const res = await fetch('/work-timer/version.json', { cache: 'no-cache' });
-    const { version: latest } = await res.json();
-    const current = localStorage.getItem('app_version');
-
-    if (current && current !== latest) {
-      console.warn('[App] Version changed. Clearing cache and reloading...');
-      localStorage.clear();
-      caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
-      location.reload(true);
-    }
-
-    localStorage.setItem('app_version', latest);
-  } catch (err) {
-    console.error('[App] Failed to check app version', err);
-  }
 }
-checkAppVersion();
+
+// ✅ Inject app version into a <meta> tag at runtime
+const metaTag = document.createElement('meta');
+metaTag.name = 'app-version';
+metaTag.content = __APP_VERSION__;
+document.head.appendChild(metaTag);
+
+// ✅ Version check logic
+const htmlVersion = document.querySelector('meta[name="app-version"]')?.content;
+const storedVersion = localStorage.getItem('app_version');
+
+if (storedVersion && storedVersion !== htmlVersion) {
+  console.warn('[App] Version mismatch. Clearing cache and reloading...');
+  localStorage.clear();
+  caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
+  location.reload(true);
+}
+
+localStorage.setItem('app_version', htmlVersion);
