@@ -6,11 +6,27 @@ export default function ChessClock({ player1, player2, theme, onCancel }) {
     const [player2Time, setPlayer2Time] = useState(player2.time * 60);
     const [activePlayer, setActivePlayer] = useState(null);
     const [isPaused, setIsPaused] = useState(true);
-    const bellTimeoutRef = useRef(null);
 
+    const bellTimeoutRef = useRef(null);
     const tickSound = useRef(null);
     const bellSound = useRef(null);
     const bellPlayedRef = useRef(false);
+    const timerWorker = useRef(null);
+
+    const player1TimeRef = useRef(player1.time * 60);
+    const player2TimeRef = useRef(player2.time * 60);
+
+    // 🔥 New: Live state refs for tick handler
+    const isPausedRef = useRef(isPaused);
+    const activePlayerRef = useRef(activePlayer);
+
+    useEffect(() => {
+        isPausedRef.current = isPaused;
+    }, [isPaused]);
+
+    useEffect(() => {
+        activePlayerRef.current = activePlayer;
+    }, [activePlayer]);
 
     useEffect(() => {
         document.body.className = theme;
@@ -18,35 +34,65 @@ export default function ChessClock({ player1, player2, theme, onCancel }) {
     }, [theme]);
 
     useEffect(() => {
-        if (!isPaused && activePlayer !== null) {
-            const timer = setInterval(() => {
-                if (activePlayer === 1) {
-                    setPlayer1Time(prev => {
-                        if (prev <= 1) {
-                            if (!bellPlayedRef.current && bellSound.current && bellSound.current.paused) {
+        try {
+        timerWorker.current = new Worker(new URL('./timer-worker.js', import.meta.url), { type: 'module' });
+        } catch (err) {
+            alert("⚠️ Timer worker failed to start.");
+            console.error(err);
+            return;
+          }
+          
+        timerWorker.current.onmessage = (e) => {
+            if (e.data.type === "tick") {
+                console.log("[UI] Tick from worker at", new Date(e.data.timestamp).toISOString());
+
+                if (!isPausedRef.current && activePlayerRef.current === 1) {
+                    if (player1TimeRef.current > 0) {
+                        player1TimeRef.current -= 1;
+                        setPlayer1Time(player1TimeRef.current);
+                        console.log(`[UI] Updated Player 1 clock to ${player1TimeRef.current}`);
+                        if (player1TimeRef.current === 0) {
+                            if (!bellPlayedRef.current && bellSound.current?.paused) {
                                 bellPlayedRef.current = true;
                                 bellSound.current.play().catch(console.error);
                                 stopBellAfterDelay();
+                                alert(`${player1.name || "Player 1"} ran out of time!`);
                             }
-                            return 0;
                         }
-                        return prev - 1;
-                    });
-                } else {
-                    setPlayer2Time(prev => {
-                        if (prev <= 1) {
-                            if (!bellPlayedRef.current && bellSound.current && bellSound.current.paused) {
-                                bellPlayedRef.current = true;
-                                bellSound.current.play().catch(console.error);
-                                stopBellAfterDelay();
-                            }
-                            return 0;
-                        }
-                        return prev - 1;
-                    });
+                    }
                 }
-            }, 1000);
-            return () => clearInterval(timer);
+
+                if (!isPausedRef.current && activePlayerRef.current === 2) {
+                    if (player2TimeRef.current > 0) {
+                        player2TimeRef.current -= 1;
+                        setPlayer2Time(player2TimeRef.current);
+                        console.log(`[UI] Updated Player 2 clock to ${player2TimeRef.current}`);
+                        if (player2TimeRef.current === 0) {
+                            if (!bellPlayedRef.current && bellSound.current?.paused) {
+                                bellPlayedRef.current = true;
+                                bellSound.current.play().catch(console.error);
+                                stopBellAfterDelay();
+                                alert(`${player2.name || "Player 2"} ran out of time!`);
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        return () => {
+            timerWorker.current?.postMessage({ action: 'stop' });
+            timerWorker.current?.terminate();
+        };
+    }, []);
+
+    useEffect(() => {
+        if (timerWorker.current) {
+            if (!isPaused && activePlayer !== null) {
+                timerWorker.current.postMessage({ action: 'start' });
+            } else {
+                timerWorker.current.postMessage({ action: 'stop' });
+            }
         }
     }, [isPaused, activePlayer]);
 
@@ -74,7 +120,7 @@ export default function ChessClock({ player1, player2, theme, onCancel }) {
     };
 
     const togglePlayer = () => {
-        if (player1Time === 0 || player2Time === 0) return;
+        if (player1TimeRef.current === 0 || player2TimeRef.current === 0) return;
         setActivePlayer(prev => (prev === 1 ? 2 : 1));
         setIsPaused(false);
         tickSound.current?.play();
@@ -91,13 +137,17 @@ export default function ChessClock({ player1, player2, theme, onCancel }) {
     const handleReset = () => {
         setPlayer1Time(player1.time * 60);
         setPlayer2Time(player2.time * 60);
+        player1TimeRef.current = player1.time * 60;
+        player2TimeRef.current = player2.time * 60;
         setActivePlayer(null);
         setIsPaused(true);
-        bellPlayedRef.current = false; // ✅ Reset bell trigger
+        bellPlayedRef.current = false;
     };
 
     const total1 = player1.time * 60;
     const total2 = player2.time * 60;
+
+    console.log("Player 1 Time:", player1Time);
 
     return (
         <div className="timer-screen">
