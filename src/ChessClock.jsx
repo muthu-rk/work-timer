@@ -16,9 +16,11 @@ export default function ChessClock({ player1, player2, theme, onCancel }) {
     const player1TimeRef = useRef(player1.time * 60);
     const player2TimeRef = useRef(player2.time * 60);
 
-    // 🔥 New: Live state refs for tick handler
     const isPausedRef = useRef(isPaused);
     const activePlayerRef = useRef(activePlayer);
+    const lastTickRef = useRef(Date.now());
+
+    const debugMode = false;
 
     useEffect(() => {
         isPausedRef.current = isPaused;
@@ -44,41 +46,53 @@ export default function ChessClock({ player1, player2, theme, onCancel }) {
           
         timerWorker.current.onmessage = (e) => {
             if (e.data.type === "tick") {
-                console.log("[UI] Tick from worker at", new Date(e.data.timestamp).toISOString());
+                const now = e.data.timestamp;
+                const elapsed = Math.floor((now - lastTickRef.current) / 1000);
+                lastTickRef.current = now;
 
                 if (!isPausedRef.current && activePlayerRef.current === 1) {
                     if (player1TimeRef.current > 0) {
-                        player1TimeRef.current -= 1;
+                        player1TimeRef.current = Math.max(0, player1TimeRef.current - elapsed);
                         setPlayer1Time(player1TimeRef.current);
-                        console.log(`[UI] Updated Player 1 clock to ${player1TimeRef.current}`);
-                        if (player1TimeRef.current === 0) {
-                            if (!bellPlayedRef.current && bellSound.current?.paused) {
+
+                        if (player1TimeRef.current === 0 && !bellPlayedRef.current) {
                                 bellPlayedRef.current = true;
-                                bellSound.current.play().catch(console.error);
+                            bellSound.current?.play().catch(console.error);
                                 stopBellAfterDelay();
                                 alert(`${player1.name || "Player 1"} ran out of time!`);
-                            }
+                            setIsPaused(true);
                         }
                     }
                 }
 
                 if (!isPausedRef.current && activePlayerRef.current === 2) {
                     if (player2TimeRef.current > 0) {
-                        player2TimeRef.current -= 1;
+                        player2TimeRef.current = Math.max(0, player2TimeRef.current - elapsed);
                         setPlayer2Time(player2TimeRef.current);
-                        console.log(`[UI] Updated Player 2 clock to ${player2TimeRef.current}`);
-                        if (player2TimeRef.current === 0) {
-                            if (!bellPlayedRef.current && bellSound.current?.paused) {
+
+                        if (player2TimeRef.current === 0 && !bellPlayedRef.current) {
                                 bellPlayedRef.current = true;
-                                bellSound.current.play().catch(console.error);
+                            bellSound.current?.play().catch(console.error);
                                 stopBellAfterDelay();
                                 alert(`${player2.name || "Player 2"} ran out of time!`);
-                            }
+                            setIsPaused(true);
                         }
                     }
                 }
             }
         };
+
+        // 🔧 Debug mode: simulate system sleep/resume
+        if (debugMode) {
+            window.addEventListener("keydown", (e) => {
+                if (e.key === "d" || e.key === "D") {
+                    const skipSeconds = 120; // simulate 2 minutes
+                    const now = Date.now();
+                    lastTickRef.current = now - skipSeconds * 1000;
+                    alert(`[Debug] Simulated resume after ${skipSeconds} seconds.`);
+                }
+            });
+        }
 
         return () => {
             timerWorker.current?.postMessage({ action: 'stop' });
@@ -89,6 +103,7 @@ export default function ChessClock({ player1, player2, theme, onCancel }) {
     useEffect(() => {
         if (timerWorker.current) {
             if (!isPaused && activePlayer !== null) {
+                lastTickRef.current = Date.now();
                 timerWorker.current.postMessage({ action: 'start' });
             } else {
                 timerWorker.current.postMessage({ action: 'stop' });
@@ -146,8 +161,6 @@ export default function ChessClock({ player1, player2, theme, onCancel }) {
 
     const total1 = player1.time * 60;
     const total2 = player2.time * 60;
-
-    console.log("Player 1 Time:", player1Time);
 
     return (
         <div className="timer-screen">
